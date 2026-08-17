@@ -12,54 +12,55 @@ int match;
 int charIndex;
 char* currentLine[1000];
 
-// Ask the user to input some text
+// Prompt user to input phrase to search for
 printf("Enter the phrase to be searched for: \n");
-// Get and save the text
 scanf("%s", phrase);
 
 int phraseLength = strlen(phrase);
 
-FILE *getLinesTotal = fopen("Odyssey.txt", "r"); // Open file in read mode
+// Confirm number of lines in file
+FILE *getLinesTotal = fopen("Odyssey.txt", "r");
 
-if (getLinesTotal == NULL) {
-    printf("Error: Could not open file.\n");
-    return 1;
-}
+    if (getLinesTotal == NULL) {
+        printf("Error: Could not open file.\n");
+        return 1;
+    }
 
-while (fgets(line, sizeof(line), getLinesTotal)) { // Read file line-by-line
-    ++noOfLines;
-}
+    while (fgets(line, sizeof(line), getLinesTotal)) { // Read file line-by-line
+        ++noOfLines;
+    }
 
 fclose(getLinesTotal); //Close the file
 
-//char* ptr;
-//ptr = (char*) malloc(noOfLines * sizeof(line));
 
-
-char ptr[noOfLines][255];  //Line causing segmentation fault
+// Read lines from file into array
+char ptr[noOfLines][255];
+noOfLines = 0;
 
 FILE *readLines = fopen("Odyssey.txt", "r");
 
-if (readLines == NULL) {
-    printf("Error: Could not open file.\n");
-    return 1;
-}
+    if (readLines == NULL) {
+        printf("Error: Could not open file.\n");
+        return 1;
+    }
 
-noOfLines = 0;
+    while (fgets(line, sizeof(line), getLinesTotal)) {
+        strcpy(ptr[noOfLines],line);
+        ++noOfLines;
 
-while (fgets(line, sizeof(line), getLinesTotal)) { // Read file line-by-line
-    //ptr[noOfLines] = line;
-    strcpy(ptr[noOfLines],line);
-    ++noOfLines;
-
-}
+    }
 
 fclose(readLines);
 
+// Iterates through every element in the array
 for (int eachLine = 0; eachLine < noOfLines; eachLine++) {
+    // Only checks lines of an appropriate length
     if (strlen(ptr[eachLine]) >= phraseLength) {
+	// Uses every valid character in the current line as a starting point for the potential phrase match
         for (int eachChar = 0; eachChar < strlen(ptr[eachLine])-phraseLength; eachChar++) {
 	    match = 1;
+	    // If a subsequent character after the starting point doesn't match the phrase
+	    // note that a match has not occurred
             for (int eachPhraseChar = 0; eachPhraseChar < phraseLength; eachPhraseChar++) {
 		charIndex = eachChar + eachPhraseChar;
 		if (ptr[eachLine][charIndex] != phrase[eachPhraseChar]) {
@@ -67,6 +68,7 @@ for (int eachLine = 0; eachLine < noOfLines; eachLine++) {
 		}
 		    
 	    }
+	    //All matches are counted for output at the end of the program
 	    if (match == 1) {
 	        ++occurrences;
 	    }
