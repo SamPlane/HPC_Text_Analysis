@@ -1,4 +1,6 @@
-# HPC_Text_Analysis
-C implementation to count instances of a specific string in a large text corpus, sped up using MPI 
+# HPC\_Text\_Analysis
 
-Text used is "The Odyssey" in a plaintext file, obtained from Project Gutenberg
+C implementation to count instances of a specific string in a large text corpus, sped up using MPI
+
+Example text used is "The Odyssey" in a plaintext file, obtained from Project Gutenberg
+
