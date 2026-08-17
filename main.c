@@ -5,10 +5,12 @@
 int main() {
 
 char phrase[100];
-
 char line[1000];
-
 int noOfLines = 0;
+int occurrences = 0;
+int match;
+int charIndex;
+char* currentLine[1000];
 
 // Ask the user to input some text
 printf("Enter the phrase to be searched for: \n");
@@ -53,11 +55,6 @@ while (fgets(line, sizeof(line), getLinesTotal)) { // Read file line-by-line
 }
 
 fclose(readLines);
-
-int occurrences = 0;
-int match;
-int charIndex;
-char* currentLine[1000];
 
 for (int eachLine = 0; eachLine < noOfLines; eachLine++) {
     if (strlen(ptr[eachLine]) >= phraseLength) {
