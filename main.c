@@ -3,7 +3,9 @@
 #include <string.h>
 #include "mpi.h"
 
-int main() {
+int main(int argc, char *argv[]) {
+
+MPI_Init(&argc, &argv);
 
 char phrase[100];
 char line[1000];
@@ -12,6 +14,14 @@ int occurrences = 0;
 int match;
 int charIndex;
 char* currentLine[1000];
+int myId;
+int numProcs;
+
+MPI_Comm_rank(MPI_COMM_WORLD, &myId);
+MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+
+printf("There are %d tasks \n", numProcs);
+printf("This process number %d \n", myId);
 
 // Prompt user to input phrase to search for
 printf("Enter the phrase to be searched for: \n");
@@ -79,8 +89,7 @@ for (int eachLine = 0; eachLine < noOfLines; eachLine++) {
 
 printf("There are %d occurrences of this phrase in the text \n", occurrences);
 
-//free(ptr);
-
+MPI_Finalize();
 
 return 0;
 }
