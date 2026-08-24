@@ -37,6 +37,7 @@ fclose(getLinesTotal); //Close the file
 char ptr[noOfLines][255];
 noOfLines = 0;
 
+// Adds all lines from the corpus text into an array to be iterated through
 FILE *readLines = fopen("Odyssey.txt", "r");
 
     if (readLines == NULL) {
@@ -77,9 +78,6 @@ for (int eachLine = 0; eachLine < noOfLines; eachLine++) {
 }
 
 printf("There are %d occurrences of this phrase in the text \n", occurrences);
-
-//free(ptr);
-
 
 return 0;
 }
