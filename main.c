@@ -11,6 +11,7 @@ int noOfLines = 0;
 int occurrences = 0;
 int match;
 int charIndex;
+int phraseLength;
 char* currentLine[1000];
 int myId;
 int numProcs;
@@ -20,20 +21,25 @@ MPI_Init(&argc, &argv);
 MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
 MPI_Comm_rank(MPI_COMM_WORLD, &myId);
 
-printf("There are %d tasks \n", numProcs);
-printf("This is process number %d \n", myId);
+//printf("There are %d tasks \n", numProcs);
+//printf("This is process number %d \n", myId);
 
 // Prompt user to input phrase to search for
 if (myId == 0 ) {
     printf("Enter the phrase to be searched for: \n");
     scanf("%s", phrase);
+    phraseLength = strlen(phrase);
 }
 
-int phraseLength = strlen(phrase);
+MPI_Barrier(MPI_COMM_WORLD);
 
-MPI_Bcast(&phrase, 3, MPI_CHAR, 0, MPI_COMM_WORLD);
+MPI_Bcast(&phraseLength, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-printf("This is process number %d after bcast and the phrase is %s \n", myId, phrase);
+//printf("Phrase Length Broadcast \n");
+
+MPI_Bcast(&phrase, phraseLength, MPI_CHAR, 0, MPI_COMM_WORLD);
+
+//printf("This is process number %d after bcast and the phrase is %s \n", myId, phrase);
 
 // Confirm number of lines in file
 FILE *getLinesTotal = fopen("Odyssey.txt", "r");
