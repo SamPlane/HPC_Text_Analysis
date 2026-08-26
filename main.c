@@ -5,8 +5,6 @@
 
 int main(int argc, char *argv[]) {
 
-MPI_Init(&argc, &argv);
-
 char phrase[100];
 char line[1000];
 int noOfLines = 0;
@@ -17,17 +15,25 @@ char* currentLine[1000];
 int myId;
 int numProcs;
 
-MPI_Comm_rank(MPI_COMM_WORLD, &myId);
+MPI_Init(&argc, &argv);
+
 MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+MPI_Comm_rank(MPI_COMM_WORLD, &myId);
 
 printf("There are %d tasks \n", numProcs);
-printf("This process number %d \n", myId);
+printf("This is process number %d \n", myId);
 
 // Prompt user to input phrase to search for
-printf("Enter the phrase to be searched for: \n");
-scanf("%s", phrase);
+if (myId == 0 ) {
+    printf("Enter the phrase to be searched for: \n");
+    scanf("%s", phrase);
+}
 
 int phraseLength = strlen(phrase);
+
+MPI_Bcast(&phrase, 3, MPI_CHAR, 0, MPI_COMM_WORLD);
+
+printf("This is process number %d after bcast and the phrase is %s \n", myId, phrase);
 
 // Confirm number of lines in file
 FILE *getLinesTotal = fopen("Odyssey.txt", "r");
@@ -63,6 +69,7 @@ FILE *readLines = fopen("Odyssey.txt", "r");
 
 fclose(readLines);
 
+
 // Iterates through every element in the array
 for (int eachLine = 0; eachLine < noOfLines; eachLine++) {
     // Only checks lines of an appropriate length
@@ -92,4 +99,5 @@ printf("There are %d occurrences of this phrase in the text \n", occurrences);
 MPI_Finalize();
 
 return 0;
+
 }
