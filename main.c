@@ -15,6 +15,7 @@ int phraseLength;
 char* currentLine[1000];
 int myId;
 int numProcs;
+int lowerBound, upperBound;
 
 MPI_Init(&argc, &argv);
 
@@ -75,9 +76,12 @@ FILE *readLines = fopen("Odyssey.txt", "r");
 
 fclose(readLines);
 
+lowerBound = (noOfLines/numProcs) * myId;
+upperBound = (noOfLines/numProcs) * (myId+1);
+
 
 // Iterates through every element in the array
-for (int eachLine = 0; eachLine < noOfLines; eachLine++) {
+for (int eachLine = lowerBound; eachLine < upperBound; eachLine++) {
     // Only checks lines of an appropriate length
     if (strlen(ptr[eachLine]) >= phraseLength) {
 	// Uses every valid character in the current line as a starting point for the potential phrase match
