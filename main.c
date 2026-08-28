@@ -15,6 +15,7 @@ int phraseLength;
 char* currentLine[1000];
 int myId;
 int numProcs;
+int occurrencesTotal = 0;
 int lowerBound, upperBound;
 
 MPI_Init(&argc, &argv);
@@ -104,7 +105,27 @@ for (int eachLine = lowerBound; eachLine < upperBound; eachLine++) {
     }
 }
 
-printf("There are %d occurrences of this phrase in the text \n", occurrences);
+int occurrencesArray[numProcs];
+
+// Collects total occurrences of the specified phrase from all processes into one process
+if(myId == 0) {
+    MPI_Gather(&occurrences, 1, MPI_INT, occurrencesArray, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    //printf("Values collected on process %d: %d, %d, %d, %d.\n", my_rank, buffer[0], buffer[1], buffer[2], buffer[3]);
+} else {
+    MPI_Gather(&occurrences, 1, MPI_INT, NULL, 0, MPI_INT, 0, MPI_COMM_WORLD);
+}
+
+//printf("Values collected on process %d: %d, %d, %d, %d.\n", myId, occurrencesArray[0], occurrencesArray[1], occurrencesArray[2], occurrencesArray[3]);
+
+//printf("The size of the array is %d", sizeof(occurrencesArray));
+
+if(myId == 0) {
+    for (int eachTotal = 0; eachTotal < sizeof(occurrencesArray)/ sizeof(occurrencesArray[0]); eachTotal++) {
+	//printf("The current value is %d", occurrencesArray[eachTotal]);
+        occurrencesTotal = occurrencesTotal + occurrencesArray[eachTotal];
+    }
+    printf("There are %d occurrences of this phrase in the text \n", occurrencesTotal);
+}
 
 MPI_Finalize();
 
