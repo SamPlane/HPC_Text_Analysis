@@ -20,11 +20,9 @@ int lowerBound, upperBound;
 
 MPI_Init(&argc, &argv);
 
+// Obtains values of process number and total number of processes
 MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
 MPI_Comm_rank(MPI_COMM_WORLD, &myId);
-
-//printf("There are %d tasks \n", numProcs);
-//printf("This is process number %d \n", myId);
 
 // Prompt user to input phrase to search for
 if (myId == 0 ) {
@@ -35,13 +33,9 @@ if (myId == 0 ) {
 
 MPI_Barrier(MPI_COMM_WORLD);
 
+// Broadcasts the phrase to be searched for to all the processes
 MPI_Bcast(&phraseLength, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-//printf("Phrase Length Broadcast \n");
-
-MPI_Bcast(&phrase, phraseLength, MPI_CHAR, 0, MPI_COMM_WORLD);
-
-//printf("This is process number %d after bcast and the phrase is %s \n", myId, phrase);
+MPI_Bcast(&phrase, phraseLength, MPI_CHAR, 0, MPI_COMM_WORLD); 
 
 // Confirm number of lines in file
 FILE *getLinesTotal = fopen("Odyssey.txt", "r");
@@ -77,6 +71,7 @@ FILE *readLines = fopen("Odyssey.txt", "r");
 
 fclose(readLines);
 
+// Calculates the bounds that each process will iterate over in the array
 lowerBound = (noOfLines/numProcs) * myId;
 upperBound = (noOfLines/numProcs) * (myId+1);
 
@@ -110,18 +105,14 @@ int occurrencesArray[numProcs];
 // Collects total occurrences of the specified phrase from all processes into one process
 if(myId == 0) {
     MPI_Gather(&occurrences, 1, MPI_INT, occurrencesArray, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    //printf("Values collected on process %d: %d, %d, %d, %d.\n", my_rank, buffer[0], buffer[1], buffer[2], buffer[3]);
 } else {
     MPI_Gather(&occurrences, 1, MPI_INT, NULL, 0, MPI_INT, 0, MPI_COMM_WORLD);
 }
 
-//printf("Values collected on process %d: %d, %d, %d, %d.\n", myId, occurrencesArray[0], occurrencesArray[1], occurrencesArray[2], occurrencesArray[3]);
 
-//printf("The size of the array is %d", sizeof(occurrencesArray));
-
+// Sums the total values collected by processes and outputs the sum total
 if(myId == 0) {
     for (int eachTotal = 0; eachTotal < sizeof(occurrencesArray)/ sizeof(occurrencesArray[0]); eachTotal++) {
-	//printf("The current value is %d", occurrencesArray[eachTotal]);
         occurrencesTotal = occurrencesTotal + occurrencesArray[eachTotal];
     }
     printf("There are %d occurrences of this phrase in the text \n", occurrencesTotal);
